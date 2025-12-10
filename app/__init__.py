@@ -35,12 +35,14 @@ def create_app():
     from app.routes.auth import auth_bp
     from app.routes.main import main_bp
     from app.routes.docker import docker_bp
-    from app.routes.gitee import gitee_bp
+    #from app.routes.gitee import gitee_bp
+    from app.routes.github import github_bp
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
     app.register_blueprint(docker_bp)
-    app.register_blueprint(gitee_bp)
+    #app.register_blueprint(gitee_bp)
+    app.register_blueprint(github_bp)
     
     # Create database tables
     with app.app_context():
