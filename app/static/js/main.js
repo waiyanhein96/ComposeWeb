@@ -705,7 +705,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 加载系统类型
     async function loadSystemTypes() {
         try {
-            const response = await fetch('/api/gitee/system-types', {
+            const response = await fetch('/api/github/system-types', {
             headers: createGiteeHeaders()
         });
             const data = await response.json();
@@ -756,7 +756,7 @@ document.addEventListener('DOMContentLoaded', function() {
         currentGiteeSystemType = type;
         
         try {
-            const response = await fetch(`/api/gitee/files/${type}`, {
+            const response = await fetch(`/api/github/files/${type}`, {
                 headers: createGiteeHeaders()
             });
             const data = await response.json();
@@ -1053,7 +1053,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 下载Gitee文件
     async function downloadGiteeFile(url, systemType, filename) {
         try {
-            const response = await fetch('/api/gitee/download', {
+            const response = await fetch('/api/github/download', {
                 method: 'POST',
                 headers: createGiteeHeaders(),
                 body: JSON.stringify({
@@ -1080,7 +1080,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 编辑文件
     async function editFile(filePath, filename) {
         try {
-            const response = await fetch('/api/gitee/file-content', {
+            const response = await fetch('/api/github/file-content', {
                 method: 'POST',
                 headers: createGiteeHeaders(),
                 body: JSON.stringify({ file_path: filePath })
@@ -1128,7 +1128,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const content = fileContentText.value;
         
         try {
-            const response = await fetch('/api/gitee/update-file', {
+            const response = await fetch('/api/github/update-file', {
                 method: 'POST',
                 headers: createGiteeHeaders(),
                 body: JSON.stringify({
@@ -1161,7 +1161,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         try {
             // 先保存文件
-            const saveResponse = await fetch('/api/gitee/update-file', {
+            const saveResponse = await fetch('/api/github/update-file', {
                 method: 'POST',
                 headers: createGiteeHeaders(),
                 body: JSON.stringify({
