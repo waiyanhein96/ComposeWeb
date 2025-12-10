@@ -34,8 +34,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const localFileCount = document.getElementById('local-file-count');
     
     const systemTypeSelect = document.getElementById('system-type-select');
-    const refreshGiteeFilesBtn = document.getElementById('refresh-gitee-files');
-    const giteeFilesBody = document.getElementById('gitee-files-body');
+    const refreshGitHubFilesBtn = document.getElementById('refresh-GitHub-files');
+    const GitHubFilesBody = document.getElementById('GitHub-files-body');
     
     const refreshDeploymentsBtn = document.getElementById('refresh-deployments');
     const deploymentsBody = document.getElementById('deployments-body');
@@ -44,9 +44,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const changePasswordForm = document.getElementById('change-password-form');
     const upgradeComposeBtn = document.getElementById('upgrade-compose-btn');
     const composeVersionWarning = document.getElementById('compose-version-warning');
-    const giteeSettingsForm = document.getElementById('gitee-settings-form');
-    const giteeTokenInput = document.getElementById('gitee-token');
-    const clearGiteeTokenBtn = document.getElementById('clear-gitee-token');
+    const GitHubSettingsForm = document.getElementById('GitHub-settings-form');
+    const GitHubTokenInput = document.getElementById('GitHub-token');
+    const clearGitHubTokenBtn = document.getElementById('clear-GitHub-token');
     
     // 当前状态
     let currentEditingFile = null;
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 添加返回按钮到页面卡片
     function addBackButtons() {
-        const pages = ['local-files', 'gitee-files', 'deployments', 'settings'];
+        const pages = ['local-files', 'GitHub-files', 'deployments', 'settings'];
         pages.forEach(pageId => {
             const section = document.getElementById(`${pageId}-section`);
             if (section) {
@@ -102,8 +102,8 @@ document.addEventListener('DOMContentLoaded', function() {
         loadLocalFiles();
         loadSystemTypes();
         
-        // 加载Gitee Token
-        loadGiteeToken();
+        // 加载GitHub Token
+        loadGitHubToken();
         
         // 添加返回按钮
         addBackButtons();
@@ -112,36 +112,36 @@ document.addEventListener('DOMContentLoaded', function() {
         setupEventListeners();
     }
     
-    // 加载Gitee Token
-    async function loadGiteeToken() {
-        if (!giteeTokenInput) return;
+    // 加载GitHub Token
+    async function loadGitHubToken() {
+        if (!GitHubTokenInput) return;
         
         try {
-            const response = await fetch('/api/settings/gitee-token');
+            const response = await fetch('/api/settings/GitHub-token');
             if (response.ok) {
                 const data = await response.json();
                 if (data.token) {
-                    giteeTokenInput.value = data.token;
+                    GitHubTokenInput.value = data.token;
                 }
             }
         } catch (error) {
-            console.error('加载Gitee Token失败:', error);
+            console.error('加载GitHub Token失败:', error);
         }
     }
     
-    // 获取Gitee Token
-    function getGiteeToken() {
-        return giteeTokenInput ? giteeTokenInput.value.trim() : '';
+    // 获取GitHub Token
+    function getGitHubToken() {
+        return GitHubTokenInput ? GitHubTokenInput.value.trim() : '';
     }
     
-    // 创建带Gitee Token的headers
-    function createGiteeHeaders() {
+    // 创建带GitHub Token的headers
+    function createGitHubHeaders() {
         const headers = {
             'Content-Type': 'application/json'
         };
-        const token = getGiteeToken();
+        const token = getGitHubToken();
         if (token) {
-            headers['X-Gitee-Token'] = token;
+            headers['X-GitHub-Token'] = token;
         }
         return headers;
     }
@@ -227,16 +227,16 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
-        const giteeFileSearch = document.getElementById('gitee-file-search');
-        if (giteeFileSearch) {
-            giteeFileSearch.addEventListener('input', function() {
+        const GitHubFileSearch = document.getElementById('GitHub-file-search');
+        if (GitHubFileSearch) {
+            GitHubFileSearch.addEventListener('input', function() {
                 // 使用保存的原始文件列表进行过滤显示
                 const searchKeyword = this.value.trim().toLowerCase();
                 const filteredFiles = searchKeyword ? 
-                    originalGiteeFiles.filter(file => file.name.toLowerCase().includes(searchKeyword)) : 
-                    originalGiteeFiles;
+                    originalGitHubFiles.filter(file => file.name.toLowerCase().includes(searchKeyword)) : 
+                    originalGitHubFiles;
                 
-                giteeFilesBody.innerHTML = '';
+                GitHubFilesBody.innerHTML = '';
                 
                 if (filteredFiles.length > 0) {
                     filteredFiles.forEach(file => {
@@ -246,10 +246,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         const existsText = file.exists_locally ? '已下载' : '未下载';
                         const existsClass = file.exists_locally ? 'text-green-600' : 'text-gray-500';
                         const downloadBtn = file.exists_locally ? 
-                            `<button class="text-blue-600 hover:text-blue-900 edit-file-btn ml-2" data-system="${escapeHTML(currentGiteeSystemType)}" data-filename="${escapeHTML(file.name)}">
+                            `<button class="text-blue-600 hover:text-blue-900 edit-file-btn ml-2" data-system="${escapeHTML(currentGitHubSystemType)}" data-filename="${escapeHTML(file.name)}">
                                 <i class="fa fa-edit"></i> 编辑
                             </button>` : 
-                            `<button class="text-green-600 hover:text-green-900 download-file-btn ml-2" data-url="${escapeHTML(file.download_url)}" data-system="${escapeHTML(currentGiteeSystemType)}" data-filename="${escapeHTML(file.name)}">
+                            `<button class="text-green-600 hover:text-green-900 download-file-btn ml-2" data-url="${escapeHTML(file.download_url)}" data-system="${escapeHTML(currentGitHubSystemType)}" data-filename="${escapeHTML(file.name)}">
                                 <i class="fa fa-download"></i> 下载
                             </button>`;
                         
@@ -269,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex space-x-2">
                                     ${file.exists_locally ? `
-                                        <button class="text-green-600 hover:text-green-900 deploy-file-btn" data-file-path="/app/data/${escapeHTML(currentGiteeSystemType)}/${escapeHTML(file.name)}">
+                                        <button class="text-green-600 hover:text-green-900 deploy-file-btn" data-file-path="/app/data/${escapeHTML(currentGitHubSystemType)}/${escapeHTML(file.name)}">
                                             <i class="fa fa-rocket"></i> 部署
                                         </button>
                                     ` : ''}
@@ -277,7 +277,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </div>
                             </td>
                         `;
-                        giteeFilesBody.appendChild(row);
+                        GitHubFilesBody.appendChild(row);
                     });
                     
                     // 添加按钮事件
@@ -286,7 +286,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             const url = this.getAttribute('data-url');
                             const system = this.getAttribute('data-system');
                             const filename = this.getAttribute('data-filename');
-                            downloadGiteeFile(url, system, filename);
+                            downloadGitHubFile(url, system, filename);
                         });
                     });
                     
@@ -306,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
                     });
                 } else {
-                    giteeFilesBody.innerHTML = `
+                    GitHubFilesBody.innerHTML = `
                         <tr>
                             <td colspan="3" class="px-6 py-10 text-center text-gray-500">
                                 <i class="fa fa-file-text-o text-3xl mb-2 block"></i>
@@ -335,20 +335,20 @@ document.addEventListener('DOMContentLoaded', function() {
         // 系统类型选择
         systemTypeSelect.addEventListener('change', handleSystemTypeChange);
         
-        // 刷新Gitee文件
-        refreshGiteeFilesBtn.addEventListener('click', loadGiteeFiles);
+        // 刷新GitHub文件
+        refreshGitHubFilesBtn.addEventListener('click', () => loadGitHubFiles());
         
         // 刷新部署记录
         refreshDeploymentsBtn.addEventListener('click', loadDeployments);
         
-        // Gitee Token设置
-        if (giteeSettingsForm) {
-            giteeSettingsForm.addEventListener('submit', async function(e) {
+        // GitHub Token设置
+        if (GitHubSettingsForm) {
+            GitHubSettingsForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
-                const token = giteeTokenInput.value.trim();
+                const token = GitHubTokenInput.value.trim();
                 
                 try {
-                    const response = await fetch('/api/settings/gitee-token', {
+                    const response = await fetch('/api/settings/GitHub-token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -357,35 +357,35 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                     
                     if (response.ok) {
-                        showNotification('success', '设置成功', 'Gitee Token已保存');
+                        showNotification('success', '设置成功', 'GitHub Token已保存');
                     } else {
                         const errorData = await response.json();
                         showNotification('error', '设置失败', errorData.message || '保存失败');
                     }
                 } catch (error) {
-                    console.error('Save Gitee token error:', error);
+                    console.error('Save GitHub token error:', error);
                     showNotification('error', '设置失败', '网络错误，请稍后重试');
                 }
             });
         }
         
-        // 清除Gitee Token
-        if (clearGiteeTokenBtn) {
-            clearGiteeTokenBtn.addEventListener('click', async function() {
-                if (confirm('确定要清除Gitee Token吗？')) {
+        // 清除GitHub Token
+        if (clearGitHubTokenBtn) {
+            clearGitHubTokenBtn.addEventListener('click', async function() {
+                if (confirm('确定要清除GitHub Token吗？')) {
                     try {
-                        const response = await fetch('/api/settings/gitee-token', {
+                        const response = await fetch('/api/settings/GitHub-token', {
                             method: 'DELETE'
                         });
                         
                         if (response.ok) {
-                            giteeTokenInput.value = '';
-                            showNotification('success', '操作成功', 'Gitee Token已清除');
+                            GitHubTokenInput.value = '';
+                            showNotification('success', '操作成功', 'GitHub Token已清除');
                         } else {
                             showNotification('error', '操作失败', '清除失败');
                         }
                     } catch (error) {
-                        console.error('Clear Gitee token error:', error);
+                        console.error('Clear GitHub token error:', error);
                         showNotification('error', '操作失败', '网络错误，请稍后重试');
                     }
                 }
@@ -446,7 +446,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const titleMap = {
             'dashboard': '首页',
             'local-files': '本地文件',
-            'gitee-files': 'Gitee 文件',
+            'GitHub-files': 'GitHub 文件',
             'deployments': '部署记录',
             'settings': '设置'
         };
@@ -616,8 +616,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 存储原始文件列表和搜索关键字
     let originalLocalFiles = [];
-    let originalGiteeFiles = [];
-    let currentGiteeSystemType = '';
+    let originalGitHubFiles = [];
+    let currentGitHubSystemType = '';
     
     // 加载本地文件
     async function loadLocalFiles() {
@@ -706,7 +706,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function loadSystemTypes() {
         try {
             const response = await fetch('/api/github/system-types', {
-            headers: createGiteeHeaders()
+            headers: createGitHubHeaders()
         });
             const data = await response.json();
             
@@ -728,10 +728,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleSystemTypeChange() {
         const systemType = systemTypeSelect.value;
         if (systemType) {
-            loadGiteeFiles(systemType);
+            loadGitHubFiles(systemType);
         } else {
             // 清除文件列表
-            giteeFilesBody.innerHTML = `
+            GitHubFilesBody.innerHTML = `
                 <tr>
                     <td colspan="5" class="px-6 py-10 text-center text-gray-500">
                         <i class="fa fa-file-text-o text-3xl mb-2 block"></i>
@@ -740,46 +740,46 @@ document.addEventListener('DOMContentLoaded', function() {
                 <tr>
             `;
             // 重置文件计数
-            const giteeFileCount = document.getElementById('gitee-file-count');
-            if (giteeFileCount) {
-                giteeFileCount.textContent = '0';
+            const GitHubFileCount = document.getElementById('GitHub-file-count');
+            if (GitHubFileCount) {
+                GitHubFileCount.textContent = '0';
             }
         }
     }
     
-    // 加载Gitee文件
-    async function loadGiteeFiles(systemType = null) {
-        const type = systemType || systemTypeSelect.value;
+    // 加载GitHub文件
+    async function loadGitHubFiles(systemType = null) {
+        const type = (typeof systemType === 'string' && systemType.trim() !== '') ? systemType : (systemTypeSelect ? systemTypeSelect.value : '');
         if (!type) return;
         
         // 保存当前系统类型
-        currentGiteeSystemType = type;
+        currentGitHubSystemType = type;
         
         try {
             const response = await fetch(`/api/github/files/${type}`, {
-                headers: createGiteeHeaders()
+                headers: createGitHubHeaders()
             });
             const data = await response.json();
             
             if (response.ok) {
                 // 保存原始文件列表
-                originalGiteeFiles = data.files || [];
+                originalGitHubFiles = data.files || [];
                 
                 // 获取搜索关键字
-                const searchKeyword = document.getElementById('gitee-file-search')?.value.trim().toLowerCase() || '';
+                const searchKeyword = document.getElementById('GitHub-file-search')?.value.trim().toLowerCase() || '';
                 
                 // 过滤文件
                 const filteredFiles = searchKeyword ? 
-                    originalGiteeFiles.filter(file => file.name.toLowerCase().includes(searchKeyword)) : 
-                    originalGiteeFiles;
+                    originalGitHubFiles.filter(file => file.name.toLowerCase().includes(searchKeyword)) : 
+                    originalGitHubFiles;
                 
-                // 创建Gitee文件计数元素
-                const giteeFileCount = document.getElementById('gitee-file-count');
-                if (giteeFileCount) {
-                    giteeFileCount.textContent = filteredFiles.length;
+                // 创建GitHub文件计数元素
+                const GitHubFileCount = document.getElementById('GitHub-file-count');
+                if (GitHubFileCount) {
+                    GitHubFileCount.textContent = filteredFiles.length;
                 }
                 
-                giteeFilesBody.innerHTML = '';
+                GitHubFilesBody.innerHTML = '';
                 
                 if (filteredFiles.length > 0) {
                     filteredFiles.forEach(file => {
@@ -820,7 +820,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </div>
                             </td>
                         `;
-                        giteeFilesBody.appendChild(row);
+                        GitHubFilesBody.appendChild(row);
                     });
                     
                     // 添加按钮事件
@@ -829,7 +829,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             const url = this.getAttribute('data-url');
                             const system = this.getAttribute('data-system');
                             const filename = this.getAttribute('data-filename');
-                            downloadGiteeFile(url, system, filename);
+                            downloadGitHubFile(url, system, filename);
                         });
                     });
                     
@@ -849,7 +849,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
                     });
                 } else {
-                    giteeFilesBody.innerHTML = `
+                    GitHubFilesBody.innerHTML = `
                         <tr>
                             <td colspan="3" class="px-6 py-10 text-center text-gray-500">
                                 <i class="fa fa-file-text-o text-3xl mb-2 block"></i>
@@ -860,8 +860,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         } catch (error) {
-            console.error('Load Gitee files failed:', error);
-            showNotification('error', '加载失败', '无法加载Gitee文件');
+            console.error('Load GitHub files failed:', error);
+            showNotification('error', '加载失败', '无法加载GitHub文件');
         }
     }
     
@@ -1050,12 +1050,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // 下载Gitee文件
-    async function downloadGiteeFile(url, systemType, filename) {
+    // 下载GitHub文件
+    async function downloadGitHubFile(url, systemType, filename) {
         try {
             const response = await fetch('/api/github/download', {
                 method: 'POST',
-                headers: createGiteeHeaders(),
+                headers: createGitHubHeaders(),
                 body: JSON.stringify({
                     download_url: url,
                     system_type: systemType,
@@ -1067,12 +1067,12 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (response.ok && data.success) {
                 showNotification('success', '下载成功', `文件 ${filename} 下载成功`);
-                loadGiteeFiles(systemType);
+                loadGitHubFiles(systemType);
             } else {
                 showNotification('error', '下载失败', data.error || '文件下载失败');
             }
         } catch (error) {
-            console.error('Gitee file download failed:', error);
+            console.error('GitHub file download failed:', error);
             showNotification('error', '下载失败', '网络错误');
         }
     }
@@ -1082,7 +1082,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const response = await fetch('/api/github/file-content', {
                 method: 'POST',
-                headers: createGiteeHeaders(),
+                headers: createGitHubHeaders(),
                 body: JSON.stringify({ file_path: filePath })
             });
             
@@ -1130,7 +1130,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const response = await fetch('/api/github/update-file', {
                 method: 'POST',
-                headers: createGiteeHeaders(),
+                headers: createGitHubHeaders(),
                 body: JSON.stringify({
                     file_path: currentEditingFile,
                     content: content
@@ -1163,7 +1163,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // 先保存文件
             const saveResponse = await fetch('/api/github/update-file', {
                 method: 'POST',
-                headers: createGiteeHeaders(),
+                headers: createGitHubHeaders(),
                 body: JSON.stringify({
                     file_path: currentEditingFile,
                     content: content
