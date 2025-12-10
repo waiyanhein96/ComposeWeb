@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker Compose File Manager - 首页</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+</head>
+<body class="bg-gray-50 h-screen overflow-hidden">
+    <!-- 主内容区域 -->
+    <main class="h-full flex flex-col">
+        <!-- 顶部导航栏 - 包含容器名称和账户信息 -->
+        <header class="bg-white shadow-sm sticky top-0 z-10">
+            <div class="flex items-center justify-between p-4">
+                <!-- 左侧：容器名称 -->
+                <div class="flex items-center">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="w-8 h-8 mr-3">
+                    <h1 class="text-xl font-bold">Docker Compose Manager</h1>
+                </div>
+                
+                <!-- 页面标题已移除 -->
+                
+                <!-- 右侧：账户信息 -->
+                <div class="flex items-center">
+                    <div class="flex items-center mr-4">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mr-3">
+                            <i class="fa fa-user"></i>
+                        </div>
+                        <div>
+                            <span id="current-user" class="block text-sm font-medium text-gray-800">admin</span>
+                            <span class="text-xs text-gray-500">管理员</span>
+                        </div>
+                    </div>
+                    <button id="logout-btn" class="text-gray-500 hover:text-red-600 transition-colors">
+                        <i class="fa fa-sign-out"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <!-- 页面内容 - 设置滚动区域 -->
+        <div class="flex-1 overflow-y-auto p-6">
+            <!-- 首页区域 -->
+            <section id="dashboard-section" class="page-section">
+                <!-- 统计卡片 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-sm p-6 flex items-center">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mr-4">
+                            <i class="fa fa-cubes text-xl"></i>
+                        </div>
+                        <div>
+                            <div id="container-count" class="text-2xl font-bold text-gray-800">0</div>
+                            <div class="text-sm text-gray-500">总容器数</div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6 flex items-center">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 mr-4">
+                            <i class="fa fa-play-circle text-xl"></i>
+                        </div>
+                        <div>
+                            <div id="running-count" class="text-2xl font-bold text-gray-800">0</div>
+                            <div class="text-sm text-gray-500">运行中容器</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 快速操作卡片 -->
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fa fa-bolt text-blue-600 mr-2"></i>
+                        快速操作
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                        <button data-target="local-files" class="action-card flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all text-center cursor-pointer">
+                            <i class="fa fa-upload text-2xl text-blue-600 mb-2"></i>
+                            <span class="text-sm font-medium text-gray-700">上传本地文件</span>
+                        </button>
+                        <button data-target="gitee-files" class="action-card flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all text-center cursor-pointer">
+                            <i class="fa fa-download text-2xl text-blue-600 mb-2"></i>
+                            <span class="text-sm font-medium text-gray-700">从 Gitee 拉取文件</span>
+                        </button>
+                        <button data-target="deployments" class="action-card flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all text-center cursor-pointer">
+                            <i class="fa fa-history text-2xl text-blue-600 mb-2"></i>
+                            <span class="text-sm font-medium text-gray-700">查看部署记录</span>
+                        </button>
+                        <button data-target="settings" class="action-card flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all text-center cursor-pointer">
+                            <i class="fa fa-cog text-2xl text-blue-600 mb-2"></i>
+                            <span class="text-sm font-medium text-gray-700">系统设置</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+            <!-- 本地文件区域 -->
+            <section id="local-files-section" class="page-section hidden">
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fa fa-folder text-blue-600 mr-2"></i>
+                        本地 Docker Compose 文件
+                    </h3>
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+                        <div class="w-full sm:w-auto mb-2 sm:mb-0 flex items-center">
+                            <p class="text-sm text-gray-500 mr-4">
+                                <span id="local-file-count">0</span> 个文件
+                            </p>
+                            <div class="relative">
+                                <input type="text" id="local-file-search" placeholder="搜索文件名..." class="pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <label for="file-upload" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer flex items-center text-sm">
+                                <i class="fa fa-upload mr-2"></i>
+                                上传文件
+                            </label>
+                            <input type="file" id="file-upload" accept=".yml,.yaml" class="hidden">
+                            <button id="refresh-local-files" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors flex items-center text-sm">
+                                <i class="fa fa-refresh mr-2"></i>
+                                刷新
+                            </button>
+                        </div>
+                    </div>
+                    <div id="local-files-list" class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">文件名</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">系统类型</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">大小</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">修改时间</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="local-files-body" class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td colspan="5" class="px-6 py-10 text-center text-gray-500">
+                                        <i class="fa fa-file-text-o text-3xl mb-2 block"></i>
+                                        暂无本地文件
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+            <!-- Gitee 文件区域 -->
+            <section id="gitee-files-section" class="page-section hidden">
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fa fa-github text-blue-600 mr-2"></i>
+                        Gitee Docker Compose 文件
+                    </h3>
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+                        <div class="mb-4 sm:mb-0 w-full sm:w-auto flex flex-col sm:flex-row sm:items-center">
+                            <label for="system-type-select" class="block text-sm font-medium text-gray-700 mb-1 sm:mb-0 mr-4">选择系统类型</label>
+                            <select id="system-type-select" class="block w-full sm:w-64 px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">请选择系统类型</option>
+                            </select>
+                            <span class="text-sm text-gray-500 mt-2 sm:mt-0 ml-0 sm:ml-4">
+                                文件数量: <span id="gitee-file-count" class="font-medium text-blue-600">0</span>
+                            </span>
+                        </div>
+                        <div class="flex items-center space-x-3 w-full sm:w-auto">
+                            <div class="relative flex-grow sm:flex-grow-0 sm:w-64">
+                                <input type="text" id="gitee-file-search" placeholder="搜索文件名..." class="pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm w-full">
+                                <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                            <button id="refresh-gitee-files" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors flex items-center text-sm">
+                                <i class="fa fa-refresh mr-2"></i>
+                                刷新列表
+                            </button>
+                        </div>
+                    </div>
+                    <div id="gitee-files-list" class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">文件名</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">本地状态</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gitee-files-body" class="bg-white divide-y divide-gray-200">
+                                  <tr>
+                                      <td colspan="3" class="px-6 py-10 text-center text-gray-500">
+                                          <i class="fa fa-file-text-o text-3xl mb-2 block"></i>
+                                          请选择系统类型以查看文件
+                                      </td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                    </div>
+                </div>
+            </section>
+            <!-- 部署记录区域 -->
+            <section id="deployments-section" class="page-section hidden">
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fa fa-rocket text-blue-600 mr-2"></i>
+                        部署记录
+                    </h3>
+                    <div class="flex justify-end mb-4">
+                        <button id="refresh-deployments" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors flex items-center text-sm">
+                            <i class="fa fa-refresh mr-2"></i>
+                            刷新记录
+                        </button>
+                    </div>
+                    <div id="deployments-list" class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">部署ID</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">文件名称</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">开始时间</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="deployments-body" class="bg-white divide-y divide-gray-200">
+                                  <tr>
+                                      <td colspan="5" class="px-6 py-10 text-center text-gray-500">
+                                          <i class="fa fa-history text-3xl mb-2 block"></i>
+                                          暂无部署记录
+                                      </td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                    </div>
+                </div>
+            </section>
+            <!-- 设置区域 -->
+            <section id="settings-section" class="page-section hidden">
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fa fa-user text-blue-600 mr-2"></i>
+                        账户设置
+                    </h3>
+                    <form id="change-password-form" class="space-y-4 max-w-md">
+                        <div>
+                            <label for="current-password" class="block text-sm font-medium text-gray-700 mb-1">当前密码</label>
+                            <input type="password" id="current-password" name="current-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" required>
+                        </div>
+                        <div>
+                            <label for="new-password" class="block text-sm font-medium text-gray-700 mb-1">新密码</label>
+                            <input type="password" id="new-password" name="new-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" required>
+                            <p class="mt-1 text-xs text-gray-500">密码必须包含至少8个字符，包括字母和数字。</p>
+                        </div>
+                        <div>
+                            <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1">确认新密码</label>
+                            <input type="password" id="confirm-password" name="confirm-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" required>
+                        </div>
+                        <div>
+                            <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                                更改密码
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fa fa-github-alt text-blue-600 mr-2"></i>
+                        Gitee 配置
+                    </h3>
+                    <form id="gitee-settings-form" class="space-y-4 max-w-md">
+                        <div>
+                            <label for="gitee-token" class="block text-sm font-medium text-gray-700 mb-1">Gitee Access Token</label>
+                            <input type="text" id="gitee-token" name="gitee-token" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="输入您的Gitee Access Token">
+                            <p class="mt-1 text-xs text-gray-500">用于提高API访问频率限制，可在Gitee个人设置-私人令牌中生成</p>
+                        </div>
+                        <div>
+                            <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                                保存设置
+                            </button>
+                            <button type="button" id="clear-gitee-token" class="ml-2 bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors">
+                                清除Token
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fa fa-info-circle text-blue-600 mr-2"></i>
+                        关于系统
+                    </h3>
+                    <ul class="space-y-3 text-sm text-gray-700">
+                        <li class="flex justify-between">
+                            <span class="text-gray-500">系统名称:</span>
+                            <span>Docker Compose File Manager</span>
+                        </li>
+                        <li class="flex justify-between">
+                            <span class="text-gray-500">版本:</span>
+                            <span id="app-version-detail">v1.0.0</span>
+                        </li>
+                        <li class="flex justify-between">
+                            <span class="text-gray-500">开发团队:</span>
+                            <span>DoubleStackWorkShop</span>
+                        </li>
+                        <li class="flex justify-between">
+                            <span class="text-gray-500">描述:</span>
+                            <span>通过容器部署本地或Gitee仓库的Compose文件</span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </main>
+    <!-- 文件编辑模态框 -->
+    <div id="file-edit-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="p-4 border-b flex justify-between items-center">
+                <h3 id="edit-modal-title" class="text-lg font-semibold text-gray-800">编辑文件</h3>
+                <button id="close-edit-modal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-6">
+                <div id="file-edit-content" class="mb-4">
+                    <textarea id="file-content-text" class="w-full h-96 p-4 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 font-mono text-sm" placeholder="文件内容..."></textarea>
+                </div>
+                <div id="file-preview-warning" class="hidden bg-yellow-50 p-3 rounded-lg border border-yellow-200 text-sm mb-4">
+                    <i class="fa fa-exclamation-triangle text-yellow-500 mr-2"></i>
+                    文件格式可能有问题，保存前请检查内容。</div>
+            </div>
+            <div class="p-4 border-t flex justify-end space-x-3">
+                <button id="deploy-file-btn" class="bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700 transition-colors flex items-center">
+                    <i class="fa fa-rocket mr-2"></i>
+                    保存并部署
+                </button>
+                <button id="save-file-btn" class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                    <i class="fa fa-save mr-2"></i>
+                    保存
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- 部署进度模态框 -->
+    <div id="deployment-progress-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i id="progress-icon" class="fa fa-cogs text-blue-600 text-2xl"></i>
+                </div>
+                <h3 id="progress-title" class="text-lg font-semibold text-gray-800 mb-2">正在部署...</h3>
+                <p id="progress-subtitle" class="text-sm text-gray-500">请稍候，正在部署容器...</p>
+            </div>
+            <div class="mb-4">
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-2">
+                    <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <div class="flex justify-between text-xs text-gray-500">
+                    <span id="progress-percentage">0%</span>
+                    <span id="progress-status">准备中...</span>
+                </div>
+            </div>
+            <div id="progress-output" class="bg-gray-50 p-4 rounded-lg border border-gray-200 max-h-32 overflow-y-auto text-sm font-mono mb-6 hidden"></div>
+            <div class="flex justify-center">
+                <button id="close-progress-modal" class="bg-gray-200 text-gray-700 py-2 px-6 rounded-lg hover:bg-gray-300 transition-colors hidden">
+                    关闭
+                </button>
+                <div id="progress-loading" class="animate-spin rounded-full h-8 w-8 border-4 border-gray-200 border-t-blue-600"></div>
+            </div>
+        </div>
+    </div>
+    <!-- 消息提示 -->
+    <div id="notification" class="fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300 max-w-sm">
+        <div class="flex items-start">
+            <i id="notification-icon" class="fa fa-check-circle text-xl mr-3 mt-0.5"></i>
+            <div class="flex-1">
+                <h4 id="notification-title" class="font-semibold text-gray-800 mb-1">操作成功</h4>
+                <p id="notification-message" class="text-sm text-gray-600">操作已成功完成。</p>
+            </div>
+            <button id="close-notification" class="text-gray-400 hover:text-gray-600 ml-3">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+    </div>
+</body>
+</html>

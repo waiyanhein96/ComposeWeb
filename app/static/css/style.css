@@ -1,0 +1,245 @@
+/* 主页面样式 */
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* 统计卡片样式 */
+.grid-cols-3 .bg-white {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.grid-cols-3 .bg-white:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* 快速操作卡片样式 */
+.action-card {
+    transition: all 0.2s ease;
+    height: 120px;
+}
+
+.action-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* 表格样式 */
+table {
+    font-size: 0.875rem;
+}
+
+table th {
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+table tbody tr:hover {
+    background-color: rgba(59, 130, 246, 0.05);
+}
+
+/* 按钮样式 */
+button {
+    transition: all 0.2s ease;
+}
+
+/* 模态框样式 */
+#file-edit-modal, #deployment-progress-modal {
+    backdrop-filter: blur(4px);
+}
+
+/* 部署进度条动画 */
+@keyframes progress {
+    from { width: 0%; }
+}
+
+.progress-anim {
+    animation: progress 0.5s ease-out;
+}
+
+/* 响应式调整 */
+@media (max-width: 1023px) {
+    header .flex {
+        flex-wrap: wrap;
+    }
+    
+    header h1, header h2 {
+        font-size: 1rem;
+    }
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* 文件编辑文本区域样式 */
+#file-content-text {
+    resize: vertical;
+    line-height: 1.5;
+}
+
+/* 通知消息样式 */
+#notification {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+#notification.success {
+    background-color: #ecfdf5;
+    border-left: 4px solid #10b981;
+}
+
+#notification.error {
+    background-color: #fef2f2;
+    border-left: 4px solid #ef4444;
+}
+
+#notification.warning {
+    background-color: #fef3c7;
+    border-left: 4px solid #f59e0b;
+}
+
+#notification.info {
+    background-color: #eff6ff;
+    border-left: 4px solid #3b82f6;
+}
+
+/* 状态标签样式 */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-success {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.status-failed {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.status-deploying {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.status-pending {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+/* 加载动画 */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* 淡入淡出动画 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* 下拉菜单样式 */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 160px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content a {
+    color: #374151;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    display: block;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-content a:hover {
+    background-color: #f9fafb;
+}
+
+/* 工具提示样式 */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #374151;
+    color: white;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.75rem;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* 表单输入框焦点样式 */
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* 时间显示样式 */
+.timestamp {
+    font-family: 'Courier New', monospace;
+}
