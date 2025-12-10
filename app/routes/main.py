@@ -99,22 +99,22 @@ def get_docker_stats():
     except Exception as e:
         return jsonify({'error': f'Failed to get Docker stats: {str(e)}'}), 500
 
-@main_bp.route('/api/settings/gitee-token', methods=['GET'])
-def get_gitee_token():
-    """Get Gitee token from session"""
+@main_bp.route('/api/settings/github-token', methods=['GET'])
+def get_github_token():
+    """Get Github token from session"""
     if 'user_id' not in session:
         return jsonify({'error': 'Not authenticated'}), 401
     
-    token = session.get('gitee_token', '')
+    token = session.get('github_token', '')
     return jsonify({
         'success': True,
         'token': token,
         'has_token': bool(token)
     })
 
-@main_bp.route('/api/settings/gitee-token', methods=['POST'])
-def set_gitee_token():
-    """Set Gitee token in session"""
+@main_bp.route('/api/settings/github-token', methods=['POST'])
+def set_github_token():
+    """Set Github token in session"""
     if 'user_id' not in session:
         return jsonify({'error': 'Not authenticated'}), 401
     
@@ -122,30 +122,30 @@ def set_gitee_token():
     if not data or 'token' not in data:
         return jsonify({'error': 'Token is required'}), 400
     
-    # Validate token format (simple check - Gitee tokens are alphanumeric strings)
+    # Validate token format (simple check - Github tokens are alphanumeric strings)
     token = data['token'].strip()
     
     # Store token in session
-    session['gitee_token'] = token
+    session['github_token'] = token
     
     return jsonify({
         'success': True,
-        'message': 'Gitee token saved successfully',
+        'message': 'Github token saved successfully',
         'has_token': bool(token)
     })
 
-@main_bp.route('/api/settings/gitee-token', methods=['DELETE'])
-def clear_gitee_token():
-    """Clear Gitee token from session"""
+@main_bp.route('/api/settings/github-token', methods=['DELETE'])
+def clear_github_token():
+    """Clear Github token from session"""
     if 'user_id' not in session:
         return jsonify({'error': 'Not authenticated'}), 401
     
     # Remove token from session
-    if 'gitee_token' in session:
-        del session['gitee_token']
+    if 'github_token' in session:
+        del session['github_token']
     
     return jsonify({
         'success': True,
-        'message': 'Gitee token cleared successfully',
+        'message': 'Github token cleared successfully',
         'has_token': False
     })
