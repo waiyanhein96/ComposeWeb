@@ -77,9 +77,9 @@
                             <i class="fa fa-upload text-2xl text-blue-600 mb-2"></i>
                             <span class="text-sm font-medium text-gray-700">上传本地文件</span>
                         </button>
-                        <button data-target="gitee-files" class="action-card flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all text-center cursor-pointer">
+                        <button data-target="GitHub-files" class="action-card flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all text-center cursor-pointer">
                             <i class="fa fa-download text-2xl text-blue-600 mb-2"></i>
-                            <span class="text-sm font-medium text-gray-700">从 Gitee 拉取文件</span>
+                            <span class="text-sm font-medium text-gray-700">从 GitHub 拉取文件</span>
                         </button>
                         <button data-target="deployments" class="action-card flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all text-center cursor-pointer">
                             <i class="fa fa-history text-2xl text-blue-600 mb-2"></i>
@@ -144,12 +144,12 @@
                     </div>
                 </div>
             </section>
-            <!-- Gitee 文件区域 -->
-            <section id="gitee-files-section" class="page-section hidden">
+            <!-- GitHub 文件区域 -->
+            <section id="GitHub-files-section" class="page-section hidden">
                 <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                         <i class="fa fa-github text-blue-600 mr-2"></i>
-                        Gitee Docker Compose 文件
+                        GitHub Docker Compose 文件
                     </h3>
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
                         <div class="mb-4 sm:mb-0 w-full sm:w-auto flex flex-col sm:flex-row sm:items-center">
@@ -158,21 +158,21 @@
                                 <option value="">请选择系统类型</option>
                             </select>
                             <span class="text-sm text-gray-500 mt-2 sm:mt-0 ml-0 sm:ml-4">
-                                文件数量: <span id="gitee-file-count" class="font-medium text-blue-600">0</span>
+                                文件数量: <span id="GitHub-file-count" class="font-medium text-blue-600">0</span>
                             </span>
                         </div>
                         <div class="flex items-center space-x-3 w-full sm:w-auto">
                             <div class="relative flex-grow sm:flex-grow-0 sm:w-64">
-                                <input type="text" id="gitee-file-search" placeholder="搜索文件名..." class="pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm w-full">
+                                <input type="text" id="GitHub-file-search" placeholder="搜索文件名..." class="pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm w-full">
                                 <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                             </div>
-                            <button id="refresh-gitee-files" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors flex items-center text-sm">
+                            <button id="refresh-GitHub-files" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors flex items-center text-sm">
                                 <i class="fa fa-refresh mr-2"></i>
                                 刷新列表
                             </button>
                         </div>
                     </div>
-                    <div id="gitee-files-list" class="overflow-x-auto">
+                    <div id="GitHub-files-list" class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
@@ -181,7 +181,7 @@
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
                                 </tr>
                             </thead>
-                            <tbody id="gitee-files-body" class="bg-white divide-y divide-gray-200">
+                            <tbody id="GitHub-files-body" class="bg-white divide-y divide-gray-200">
                                   <tr>
                                       <td colspan="3" class="px-6 py-10 text-center text-gray-500">
                                           <i class="fa fa-file-text-o text-3xl mb-2 block"></i>
@@ -260,19 +260,19 @@
                 <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                         <i class="fa fa-github-alt text-blue-600 mr-2"></i>
-                        Gitee 配置
+                        GitHub 配置
                     </h3>
-                    <form id="gitee-settings-form" class="space-y-4 max-w-md">
+                    <form id="GitHub-settings-form" class="space-y-4 max-w-md">
                         <div>
-                            <label for="gitee-token" class="block text-sm font-medium text-gray-700 mb-1">Gitee Access Token</label>
-                            <input type="text" id="gitee-token" name="gitee-token" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="输入您的Gitee Access Token">
-                            <p class="mt-1 text-xs text-gray-500">用于提高API访问频率限制，可在Gitee个人设置-私人令牌中生成</p>
+                            <label for="GitHub-token" class="block text-sm font-medium text-gray-700 mb-1">GitHub Access Token</label>
+                            <input type="text" id="GitHub-token" name="GitHub-token" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="输入您的GitHub Access Token">
+                            <p class="mt-1 text-xs text-gray-500">用于提高API访问频率限制，可在GitHub个人设置-私人令牌中生成</p>
                         </div>
                         <div>
                             <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
                                 保存设置
                             </button>
-                            <button type="button" id="clear-gitee-token" class="ml-2 bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors">
+                            <button type="button" id="clear-GitHub-token" class="ml-2 bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors">
                                 清除Token
                             </button>
                         </div>
@@ -294,11 +294,11 @@
                         </li>
                         <li class="flex justify-between">
                             <span class="text-gray-500">开发团队:</span>
-                            <span>DoubleStackWorkShop</span>
+                            <span>waiyanhein96</span>
                         </li>
                         <li class="flex justify-between">
                             <span class="text-gray-500">描述:</span>
-                            <span>通过容器部署本地或Gitee仓库的Compose文件</span>
+                            <span>通过容器部署本地或GitHub仓库的Compose文件</span>
                         </li>
                     </ul>
                 </div>
